@@ -4,11 +4,11 @@ import { Calculator, DollarSign, Percent, Calendar, TrendingUp } from 'lucide-re
 import { analyzeLoanEligibility } from '../../services/geminiService';
 
 interface FinanceCalculatorProps {
-  initialTab?: 'EMI' | 'SIP' | 'TAX' | 'ELIGIBILITY';
+  initialTab?: 'EMI' | 'SIP' | 'TAX' | 'ELIGIBILITY' | 'INFLATION' | 'FD' | 'RD';
 }
 
 const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI' }) => {
-  const [activeTab, setActiveTab] = useState<'EMI' | 'SIP' | 'TAX' | 'ELIGIBILITY'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'EMI' | 'SIP' | 'TAX' | 'ELIGIBILITY' | 'INFLATION' | 'FD' | 'RD'>(initialTab);
   
   // EMI State
   const [loanAmount, setLoanAmount] = useState(500000);
@@ -32,6 +32,24 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
   const [eligibilityResult, setEligibilityResult] = useState('');
   const [loadingAi, setLoadingAi] = useState(false);
 
+  // Inflation Adjuster State
+  const [inflationRate, setInflationRate] = useState(6);
+  const [yearsInflation, setYearsInflation] = useState(5);
+  const [currentValue, setCurrentValue] = useState(100000);
+  const [inflationResult, setInflationResult] = useState({ futureCost: 0, realValue: 0 });
+
+  // Fixed Deposit (FD)
+  const [fdPrincipal, setFdPrincipal] = useState(200000);
+  const [fdRate, setFdRate] = useState(7);
+  const [fdYears, setFdYears] = useState(3);
+  const [fdResult, setFdResult] = useState({ maturityAmount: 0, interestEarned: 0 });
+
+  // Recurring Deposit (RD)
+  const [rdMonthly, setRdMonthly] = useState(5000);
+  const [rdRate, setRdRate] = useState(6.5);
+  const [rdYears, setRdYears] = useState(3);
+  const [rdResult, setRdResult] = useState({ invested: 0, interest: 0, total: 0 });
+
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
@@ -40,8 +58,11 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
     calculateEMI();
     calculateSIP();
     calculateTax();
+    calculateInflation();
+    calculateFD();
+    calculateRD();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loanAmount, interestRate, tenure, sipInvestment, sipRate, sipYears, annualIncome]);
+  }, [loanAmount, interestRate, tenure, sipInvestment, sipRate, sipYears, annualIncome, inflationRate, yearsInflation, currentValue, fdPrincipal, fdRate, fdYears, rdMonthly, rdRate, rdYears]);
 
   const calculateEMI = () => {
     const p = loanAmount;
@@ -57,6 +78,32 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
       totalInterest: Math.round(totalInterest),
       totalPayment: Math.round(totalPayment)
     });
+  };
+
+  const calculateInflation = () => {
+    const r = inflationRate / 100;
+    const n = yearsInflation;
+    const futureCost = currentValue * Math.pow(1 + r, n);
+    const realValue = currentValue / Math.pow(1 + r, n);
+    setInflationResult({ futureCost: Math.round(futureCost), realValue: Math.round(realValue) });
+  };
+
+  const calculateFD = () => {
+    const p = fdPrincipal;
+    const r = fdRate / 100;
+    const n = fdYears;
+    const maturity = p * Math.pow(1 + r, n);
+    setFdResult({ maturityAmount: Math.round(maturity), interestEarned: Math.round(maturity - p) });
+  };
+
+  const calculateRD = () => {
+    const p = rdMonthly;
+    const i = rdRate / 100 / 12;
+    const n = rdYears * 12;
+    const total = p * ((Math.pow(1 + i, n) - 1) / i);
+    const invested = p * n;
+    const interest = total - invested;
+    setRdResult({ invested: Math.round(invested), interest: Math.round(interest), total: Math.round(total) });
   };
 
   const calculateSIP = () => {
@@ -129,7 +176,7 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
   return (
     <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
       <div className="flex space-x-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-2 overflow-x-auto">
-        {(['EMI', 'SIP', 'TAX', 'ELIGIBILITY'] as const).map(tab => (
+        {(['EMI', 'SIP', 'TAX', 'ELIGIBILITY', 'INFLATION', 'FD', 'RD'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -139,7 +186,7 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
               : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
-            {tab === 'EMI' ? 'EMI Calculator' : tab === 'SIP' ? 'SIP Calculator' : tab === 'TAX' ? 'Tax Calc' : 'AI Check'}
+            {tab === 'EMI' ? 'EMI Calculator' : tab === 'SIP' ? 'SIP Calculator' : tab === 'TAX' ? 'Tax Calc' : tab === 'ELIGIBILITY' ? 'AI Check' : tab === 'INFLATION' ? 'Inflation Adjuster' : tab === 'FD' ? 'Fixed Deposit' : 'Recurring Deposit'}
           </button>
         ))}
       </div>
@@ -281,6 +328,87 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
                  </button>
              </div>
           )}
+
+          {activeTab === 'INFLATION' && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Current Value</label>
+                <input 
+                  type="number" value={currentValue} onChange={(e)=>setCurrentValue(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Inflation Rate (%)</label>
+                <input 
+                  type="number" value={inflationRate} onChange={(e)=>setInflationRate(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Years</label>
+                <input 
+                  type="range" min="1" max="30" value={yearsInflation} onChange={(e)=>setYearsInflation(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary"
+                />
+                <div className="text-right font-bold text-primary mt-1">{yearsInflation} Years</div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'FD' && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Principal</label>
+                <input 
+                  type="number" value={fdPrincipal} onChange={(e)=>setFdPrincipal(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Rate (% p.a.)</label>
+                <input 
+                  type="number" value={fdRate} onChange={(e)=>setFdRate(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Years</label>
+                <input 
+                  type="range" min="1" max="20" value={fdYears} onChange={(e)=>setFdYears(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary"
+                />
+                <div className="text-right font-bold text-primary mt-1">{fdYears} Years</div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'RD' && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Monthly Deposit</label>
+                <input 
+                  type="number" value={rdMonthly} onChange={(e)=>setRdMonthly(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Rate (% p.a.)</label>
+                <input 
+                  type="number" value={rdRate} onChange={(e)=>setRdRate(Number(e.target.value))}
+                  className="w-full p-2 rounded border dark:bg-slate-900 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Years</label>
+                <input 
+                  type="range" min="1" max="15" value={rdYears} onChange={(e)=>setRdYears(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary"
+                />
+                <div className="text-right font-bold text-primary mt-1">{rdYears} Years</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Result Section */}
@@ -395,6 +523,46 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
                         <p className="text-slate-400 text-center">Fill details and click check to get an AI assessment.</p>
                     )}
                 </div>
+            )}
+
+            {activeTab === 'INFLATION' && (
+              <div className="flex flex-col h-full justify-center">
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Future Cost</h3>
+                  <p className="text-2xl font-bold text-primary">${inflationResult.futureCost.toLocaleString()}</p>
+                  <p className="text-slate-500 uppercase tracking-widest text-sm mt-2">Real value after {yearsInflation}y @ {inflationRate}%</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <p className="text-xs text-slate-500 uppercase">Current Value</p>
+                    <p className="text-xl font-bold">${currentValue.toLocaleString()}</p>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <p className="text-xs text-slate-500 uppercase">Real Value</p>
+                    <p className="text-xl font-bold">${inflationResult.realValue.toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'FD' && (
+              <div className="flex flex-col h-full justify-center">
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Maturity Amount</h3>
+                  <p className="text-2xl font-bold text-primary">${fdResult.maturityAmount.toLocaleString()}</p>
+                  <p className="text-slate-500 uppercase tracking-widest text-sm mt-2">Interest Earned: ${fdResult.interestEarned.toLocaleString()}</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'RD' && (
+              <div className="flex flex-col h-full justify-center">
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Total Value</h3>
+                  <p className="text-2xl font-bold text-primary">${rdResult.total.toLocaleString()}</p>
+                  <p className="text-slate-500 uppercase tracking-widest text-sm mt-2">Invested: ${rdResult.invested.toLocaleString()} | Interest: ${rdResult.interest.toLocaleString()}</p>
+                </div>
+              </div>
             )}
         </div>
       </div>

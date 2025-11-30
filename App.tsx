@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Settings, Moon, Sun, Globe, Search, 
   LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard,
-  Code, Type, Palette, Hash, Link as LinkIcon, Clock
+  Code, Type, Palette, Hash, Link as LinkIcon, Clock, Percent, Calendar
 } from 'lucide-react';
 import { ToolCategory, ToolItem } from './types';
 import Hero from './components/Hero';
@@ -20,6 +20,9 @@ const TOOLS: ToolItem[] = [
   { id: 't1', name: 'Income Tax Calculator', description: 'Calculate your annual tax liabilities.', category: 'Finance', icon: DollarSign },
   { id: 't2', name: 'Loan EMI Calculator', description: 'Plan your loans with smart EMI breakdowns.', category: 'Finance', icon: CreditCard, popular: true },
   { id: 't9', name: 'SIP Calculator', description: 'Estimate returns on your monthly investments.', category: 'Finance', icon: DollarSign },
+  { id: 't20', name: 'Inflation Adjuster', description: 'See future cost and real value vs inflation.', category: 'Finance', icon: Percent, isNew: true },
+  { id: 't21', name: 'Fixed Deposit (FD)', description: 'Compute maturity amount and interest.', category: 'Finance', icon: DollarSign },
+  { id: 't22', name: 'Recurring Deposit (RD)', description: 'Monthly deposit growth and interest.', category: 'Finance', icon: Calendar },
   
   // AI Text Tools
   { id: 't3', name: 'Grammar Checker', description: 'AI-powered grammar & spell fix.', category: 'Text', icon: FileText, isNew: true },
@@ -66,6 +69,16 @@ const App: React.FC = () => {
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [lang, setLang] = useState<'EN' | 'HI'>('EN');
+  const [toolUsageCount, setToolUsageCount] = useState(0);
+  const [activePage, setActivePage] = useState<'home' | 'how-to-use' | 'about'>('home');
+
+  // Load usage count from localStorage
+  useEffect(() => {
+    const storedCount = localStorage.getItem('toolUsageCount');
+    if (storedCount) {
+      setToolUsageCount(parseInt(storedCount));
+    }
+  }, []);
 
   // Theme Toggle Effect
   useEffect(() => {
@@ -86,7 +99,20 @@ const App: React.FC = () => {
 
   const handleToolClick = (id: string) => {
     setActiveToolId(id);
+    setActivePage('home');
     setSidebarOpen(false); // Close sidebar on mobile on selection
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Increment usage count
+    const newCount = toolUsageCount + 1;
+    setToolUsageCount(newCount);
+    localStorage.setItem('toolUsageCount', newCount.toString());
+  };
+
+  const navigateToPage = (page: 'home' | 'how-to-use' | 'about') => {
+    setActivePage(page);
+    setActiveToolId(null);
+    setSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -101,6 +127,12 @@ const App: React.FC = () => {
             return <FinanceCalculator initialTab="EMI" />;
         case 't9': // SIP
             return <FinanceCalculator initialTab="SIP" />;
+        case 't20': // Inflation
+          return <FinanceCalculator initialTab="INFLATION" />;
+        case 't21': // FD
+          return <FinanceCalculator initialTab="FD" />;
+        case 't22': // RD
+          return <FinanceCalculator initialTab="RD" />;
         
         case 't3': // Grammar
         case 't4': // Word Counter
@@ -157,7 +189,7 @@ const App: React.FC = () => {
             <Menu size={24} />
           </button>
           
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveToolId(null)}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigateToPage('home')}>
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <Settings className="text-white animate-[spin_8s_linear_infinite]" size={20} />
             </div>
@@ -168,9 +200,9 @@ const App: React.FC = () => {
         </div>
 
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-          <button onClick={() => setActiveToolId(null)} className="hover:text-primary transition-colors">Home</button>
-          <button className="hover:text-primary transition-colors">How to Use</button>
-          <button className="hover:text-primary transition-colors">About Us</button>
+          <button onClick={() => navigateToPage('home')} className={`hover:text-primary transition-colors ${activePage === 'home' && !activeToolId ? 'text-primary font-bold' : ''}`}>Home</button>
+          <button onClick={() => navigateToPage('how-to-use')} className={`hover:text-primary transition-colors ${activePage === 'how-to-use' ? 'text-primary font-bold' : ''}`}>How to Use</button>
+          <button onClick={() => navigateToPage('about')} className={`hover:text-primary transition-colors ${activePage === 'about' ? 'text-primary font-bold' : ''}`}>About Us</button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -192,7 +224,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <div className="flex pt-16 min-h-screen">
+      <div className="flex pt-16 flex-1">
         
         {/* --- SIDEBAR --- */}
         <aside className={`fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 z-40 overflow-y-auto`}>
@@ -217,25 +249,87 @@ const App: React.FC = () => {
 
              <div className="mt-8">
                <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-primary">29k+</div>
-                  <div className="text-xs text-slate-500 uppercase">Tools Used Today</div>
+                  <div className="text-2xl font-bold text-primary">{toolUsageCount.toLocaleString()}</div>
+                  <div className="text-xs text-slate-500 uppercase">Tools Used</div>
                </div>
              </div>
            </div>
         </aside>
 
         {/* --- MAIN CONTENT --- */}
-        <main className="flex-1 bg-slate-50 dark:bg-slate-950 transition-colors w-full overflow-x-hidden">
+        <main className="flex-1 bg-slate-50 dark:bg-slate-950 transition-colors w-full overflow-x-hidden flex flex-col">
           
           {/* Overlay for mobile sidebar */}
           {sidebarOpen && (
             <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)}></div>
           )}
 
-          {activeToolId ? (
-             <div className="p-4 lg:p-8 animate-fade-in">
+          {activePage === 'how-to-use' ? (
+            <div className="p-4 lg:p-8 max-w-5xl mx-auto animate-fade-in flex-1">
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">How to Use ToolSphere</h1>
+              <div className="prose dark:prose-invert max-w-none">
+                <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">ToolSphere is designed to be intuitive and easy to use. Follow these simple steps to get started:</p>
+                
+                <div className="space-y-6">
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xl font-bold text-primary mb-3">1. Browse Tools</h3>
+                    <p className="text-slate-600 dark:text-slate-300">Use the sidebar to browse tools by category (Finance, AI Text, Developer, Content, Image, PDF, Utility) or search for specific tools using the search bar.</p>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xl font-bold text-primary mb-3">2. Select a Tool</h3>
+                    <p className="text-slate-600 dark:text-slate-300">Click on any tool card to open it. You'll see a detailed interface with input fields and controls specific to that tool.</p>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xl font-bold text-primary mb-3">3. Input Your Data</h3>
+                    <p className="text-slate-600 dark:text-slate-300">Enter your data, upload files, or adjust sliders as needed. Most tools provide real-time results as you make changes.</p>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xl font-bold text-primary mb-3">4. Get Results</h3>
+                    <p className="text-slate-600 dark:text-slate-300">View your results instantly. For file-based tools (PDF, Image), download your processed files directly to your device.</p>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <h3 className="text-xl font-bold text-primary mb-3">5. Privacy First</h3>
+                    <p className="text-slate-600 dark:text-slate-300">All tools process data client-side in your browser. Your files and data never leave your device, ensuring complete privacy.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : activePage === 'about' ? (
+            <div className="p-4 lg:p-8 max-w-5xl mx-auto animate-fade-in flex-1">
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">About ToolSphere</h1>
+              <div className="prose dark:prose-invert max-w-none">
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+                  <h2 className="text-2xl font-bold text-primary mb-4">Our Mission</h2>
+                  <p className="text-lg text-slate-600 dark:text-slate-300">ToolSphere was created to provide a comprehensive, privacy-focused toolkit for everyone. Whether you're a student, developer, content creator, or professional, we believe powerful tools should be accessible, free, and respectful of your privacy.</p>
+                </div>
+                
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+                  <h2 className="text-2xl font-bold text-primary mb-4">What We Offer</h2>
+                  <ul className="space-y-3 text-slate-600 dark:text-slate-300">
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> 30+ professional-grade tools across 8 categories</li>
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> AI-powered text tools with Gemini integration</li>
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> Client-side processing for complete privacy</li>
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> No registration or account required</li>
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> 100% free, no hidden costs</li>
+                    <li className="flex items-start gap-3"><span className="text-primary font-bold">✓</span> Dark mode and responsive design</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <h2 className="text-2xl font-bold text-primary mb-4">Privacy & Security</h2>
+                  <p className="text-slate-600 dark:text-slate-300 mb-4">We take your privacy seriously. All file processing (PDF merge, image resize, etc.) happens directly in your browser using client-side JavaScript. Your files never touch our servers.</p>
+                  <p className="text-slate-600 dark:text-slate-300">For AI-powered features that require external API calls (Grammar Checker, Rephraser), we use secure server-side proxies to protect your API keys, but the text content is only processed temporarily and never stored.</p>
+                </div>
+              </div>
+            </div>
+          ) : activeToolId ? (
+             <div className="p-4 lg:p-8 animate-fade-in flex-1">
                 <button 
-                  onClick={() => setActiveToolId(null)}
+                  onClick={() => navigateToPage('home')}
                   className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary mb-6 transition-colors"
                 >
                   <Home size={16} /> <ChevronRight size={14} /> Tools <ChevronRight size={14} /> {TOOLS.find(t => t.id === activeToolId)?.name}
@@ -250,10 +344,10 @@ const App: React.FC = () => {
                 </div>
              </div>
           ) : (
-            <>
+            <div className="flex-1 flex flex-col">
               {activeCategory === 'All' && <Hero onExplore={() => setActiveCategory('Finance')} />}
 
-              <div className="p-4 lg:p-12 max-w-7xl mx-auto" id="tools-section">
+              <div className="p-4 lg:p-12 max-w-7xl mx-auto w-full flex-1" id="tools-section">
                 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div>
@@ -309,11 +403,38 @@ const App: React.FC = () => {
                     </div>
                 )}
               </div>
-            </>
+            </div>
           )}
           
-          <footer className="mt-auto py-8 text-center text-slate-500 text-sm border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-             <p>&copy; 2024 PM TOOLS. All rights reserved.</p>
+          <footer className="py-8 px-4 text-slate-500 text-sm border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+             <div className="max-w-7xl mx-auto">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                 <div className="text-center md:text-left">
+                   <h3 className="font-bold text-slate-700 dark:text-slate-300 mb-2">Contact Us</h3>
+                   <p className="flex items-center justify-center md:justify-start gap-2">
+                     <span>📧</span>
+                     <a href="mailto:digidhanesh@gmail.com" className="hover:text-primary transition-colors">digidhanesh@gmail.com</a>
+                   </p>
+                   <p className="flex items-center justify-center md:justify-start gap-2 mt-1">
+                     <span>📱</span>
+                     <a href="tel:+917898726342" className="hover:text-primary transition-colors">+91 7898726342</a>
+                   </p>
+                 </div>
+                 
+                 <div className="text-center">
+                   <h3 className="font-bold text-slate-700 dark:text-slate-300 mb-2">ToolSphere</h3>
+                   <p className="text-xs">Complete Toolkit for Everyone</p>
+                   <p className="text-xs mt-2">&copy; 2024 ToolSphere. All rights reserved.</p>
+                 </div>
+                 
+                 <div className="text-center md:text-right">
+                   <h3 className="font-bold text-slate-700 dark:text-slate-300 mb-2">Developed By</h3>
+                   <a href="https://dnstech.in" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">
+                     dnstech.in
+                   </a>
+                 </div>
+               </div>
+             </div>
           </footer>
 
         </main>

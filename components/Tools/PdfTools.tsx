@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { File as FileIcon, Upload, Download, Trash2, Plus, Loader2, Scissors, RotateCw, Zap, FileEdit, Globe } from 'lucide-react';
-import { PDFDocument, degrees } from 'pdf-lib';
+import { PDFDocument, degrees, rgb } from 'pdf-lib';
 
 type PDFToolTab = 'MERGE' | 'SPLIT' | 'ROTATE' | 'COMPRESS' | 'CONVERT' | 'EDIT';
 
@@ -44,12 +44,12 @@ const PdfTools: React.FC = () => {
             </div>
 
             <div className="p-6">
-                {activeTab === 'MERGE' && <MergePDFTool />}
-                {activeTab === 'SPLIT' && <SplitPDFTool />}
-                {activeTab === 'ROTATE' && <RotatePDFTool />}
-                {activeTab === 'COMPRESS' && <CompressPDFInfo />}
-                {activeTab === 'CONVERT' && <ConvertPDFInfo />}
-                {activeTab === 'EDIT' && <QuickEditInfo />}
+              {activeTab === 'MERGE' && <MergePDFTool />}
+              {activeTab === 'SPLIT' && <SplitPDFTool />}
+              {activeTab === 'ROTATE' && <RotatePDFTool />}
+              {activeTab === 'COMPRESS' && <CompressPDFTool />}
+              {activeTab === 'CONVERT' && <ConvertPDFTool />}
+              {activeTab === 'EDIT' && <QuickEditTool />}
             </div>
         </div>
     </div>
@@ -62,7 +62,7 @@ const MergePDFTool: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files).filter(f => f.type === 'application/pdf');
+      const newFiles = Array.from(e.target.files as FileList).filter((f: File) => f.type === 'application/pdf');
       setPdfFiles(prev => [...prev, ...newFiles]);
     }
   };
@@ -79,26 +79,25 @@ const MergePDFTool: React.FC = () => {
         const mergedPdf = await PDFDocument.create();
 
         for (const file of pdfFiles) {
-            const fileBuffer = await file.arrayBuffer();
-            const pdf = await PDFDocument.load(fileBuffer);
-            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-            copiedPages.forEach((page) => mergedPdf.addPage(page));
+          const fileBuffer = await file.arrayBuffer();
+          const pdf = await PDFDocument.load(fileBuffer);
+          const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+          copiedPages.forEach((p) => mergedPdf.addPage(p));
         }
-
         const pdfBytes = await mergedPdf.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         
         const link = document.createElement('a');
         link.href = url;
         link.download = 'merged-document.pdf';
         link.click();
-    } catch (error) {
+      } catch (error) {
         console.error('Merge failed', error);
         alert('Failed to merge PDFs. Ensure files are valid.');
-    } finally {
+      } finally {
         setProcessing(false);
-    }
+      }
   };
 
   return (
@@ -191,7 +190,7 @@ const SplitPDFTool: React.FC = () => {
       pages.forEach(page => newPdf.addPage(page));
       
       const pdfBytes = await newPdf.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
@@ -270,7 +269,7 @@ const RotatePDFTool: React.FC = () => {
       });
       
       const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
@@ -324,110 +323,173 @@ const RotatePDFTool: React.FC = () => {
   );
 };
 
-const CompressPDFInfo: React.FC = () => (
-  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-900 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
-    <h3 className="text-xl font-bold text-green-800 dark:text-green-300 mb-4 flex items-center gap-2">
-      <Zap size={24} /> Compress PDFs
-    </h3>
-    <p className="text-slate-700 dark:text-slate-300 mb-4">
-      For advanced PDF compression (reduce file size while maintaining quality), we recommend:
-    </p>
-    <ul className="space-y-3">
-      <li className="flex items-start gap-3">
-        <span className="text-green-600 font-bold">•</span>
-        <div>
-          <strong className="text-slate-800 dark:text-white">Smallpdf</strong> - <a href="https://smallpdf.com/compress-pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">smallpdf.com/compress-pdf</a>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Free online compression with excellent quality</p>
-        </div>
-      </li>
-      <li className="flex items-start gap-3">
-        <span className="text-green-600 font-bold">•</span>
-        <div>
-          <strong className="text-slate-800 dark:text-white">PDF24</strong> - <a href="https://tools.pdf24.org/en/compress-pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">tools.pdf24.org</a>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Free desktop & online tool with batch processing</p>
-        </div>
-      </li>
-      <li className="flex items-start gap-3">
-        <span className="text-green-600 font-bold">•</span>
-        <div>
-          <strong className="text-slate-800 dark:text-white">Adobe Acrobat</strong> - Premium quality compression
-          <p className="text-sm text-slate-600 dark:text-slate-400">Best for professional use</p>
-        </div>
-      </li>
-    </ul>
-  </div>
-);
+const CompressPDFTool: React.FC = () => {
+  const [inputFiles, setInputFiles] = useState<FileList | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [resultBlob, setResultBlob] = useState<Blob | null>(null);
+  const [log, setLog] = useState<string>("");
 
-const ConvertPDFInfo: React.FC = () => (
-  <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-    <h3 className="text-xl font-bold text-blue-800 dark:text-blue-300 mb-4 flex items-center gap-2">
-      <FileEdit size={24} /> Convert PDFs (Word, Excel, Images)
-    </h3>
-    <p className="text-slate-700 dark:text-slate-300 mb-4">
-      Convert PDFs to/from Word, Excel, PowerPoint, and images:
-    </p>
-    <div className="grid md:grid-cols-2 gap-4">
-      <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-        <h4 className="font-bold text-slate-800 dark:text-white mb-2">📄 To/From Word & Excel</h4>
-        <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-          <li>• <a href="https://www.ilovepdf.com/pdf_to_word" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">ILovePDF</a></li>
-          <li>• <a href="https://www.sejda.com/pdf-to-word" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Sejda</a></li>
-          <li>• PDFelement (Desktop)</li>
-        </ul>
+  async function compress() {
+    if (!inputFiles || inputFiles.length === 0) return;
+    setProcessing(true);
+    setLog("");
+    try {
+      const file = inputFiles[0];
+      const bytes = await file.arrayBuffer();
+      setLog((l) => l + "Loaded input PDF\n");
+      const pdfDoc = await PDFDocument.load(bytes, {
+        updateMetadata: true,
+        ignoreEncryption: true,
+      });
+      setLog((l) => l + "Parsed PDF, pages: " + pdfDoc.getPageCount() + "\n");
+
+      pdfDoc.setTitle("");
+      pdfDoc.setAuthor("");
+      pdfDoc.setSubject("");
+      pdfDoc.setKeywords([]);
+      pdfDoc.setProducer("");
+      pdfDoc.setCreator("");
+      pdfDoc.setCreationDate(undefined);
+      pdfDoc.setModificationDate(undefined);
+
+      const compressed = await pdfDoc.save({ useObjectStreams: true });
+      setLog((l) => l + "Re-saved with object streams\n");
+      const blob = new Blob([compressed as any], { type: "application/pdf" });
+      setResultBlob(blob);
+      setLog((l) => l + "Done.\n");
+    } catch (e) {
+      console.error(e);
+      setLog((l) => l + "Error: " + (e as Error).message + "\n");
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold">Compress PDF</h3>
+      <p className="text-sm text-muted-foreground">
+        Basic optimization: removes metadata and re-saves with object streams.
+      </p>
+      <div className="space-y-2">
+        <input type="file" accept="application/pdf" onChange={(e) => setInputFiles(e.target.files)} />
+        <button className="px-4 py-2 bg-indigo-600 text-white rounded" disabled={processing || !inputFiles} onClick={compress}>
+          {processing ? "Compressing..." : "Compress"}
+        </button>
       </div>
-      <div className="p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-        <h4 className="font-bold text-slate-800 dark:text-white mb-2">🖼️ To/From Images</h4>
-        <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-          <li>• <a href="https://www.pdf2go.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">PDF2Go</a></li>
-          <li>• <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">CloudConvert</a></li>
-          <li>• Adobe Acrobat</li>
-        </ul>
-      </div>
+      {resultBlob && (
+        <div className="space-y-2">
+          <a
+            className="underline text-indigo-600"
+            href={URL.createObjectURL(resultBlob)}
+            download={"compressed.pdf"}
+          >
+            Download Compressed PDF
+          </a>
+        </div>
+      )}
+      {log && (
+        <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-xs overflow-auto max-h-48">{log}</pre>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
-const QuickEditInfo: React.FC = () => (
-  <div className="p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-slate-900 dark:to-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
-    <h3 className="text-xl font-bold text-orange-800 dark:text-orange-300 mb-4 flex items-center gap-2">
-      <Globe size={24} /> Quick Online PDF Editors
-    </h3>
-    <p className="text-slate-700 dark:text-slate-300 mb-4">
-      For quick edits without installing software (add text, signatures, highlights, annotations):
-    </p>
-    <div className="grid md:grid-cols-3 gap-4">
-      {[
-        { name: 'Smallpdf', url: 'https://smallpdf.com/edit-pdf', desc: 'Full-featured online editor' },
-        { name: 'PDFgear', url: 'https://www.pdfgear.com/', desc: 'Free editing & annotation' },
-        { name: 'Sejda', url: 'https://www.sejda.com/pdf-editor', desc: 'No registration needed' },
-        { name: 'DocHub', url: 'https://dochub.com/', desc: 'Sign & fill forms easily' },
-        { name: 'pdfFiller', url: 'https://www.pdffiller.com/', desc: 'Advanced form filling' },
-        { name: 'PDF-XChange', url: 'https://www.pdf-xchange.com/', desc: 'Desktop viewer/editor' },
-      ].map(tool => (
-        <a 
-          key={tool.name}
-          href={tool.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all"
-        >
-          <h4 className="font-bold text-slate-800 dark:text-white mb-1">{tool.name}</h4>
-          <p className="text-xs text-slate-600 dark:text-slate-400">{tool.desc}</p>
-          <span className="text-xs text-blue-600 hover:underline mt-2 inline-block">Visit →</span>
+const ConvertPDFTool: React.FC = () => {
+  const [imageFiles, setImageFiles] = useState<FileList | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+
+  async function imagesToPdf() {
+    if (!imageFiles || imageFiles.length === 0) return;
+    setProcessing(true);
+    try {
+      const pdfDoc = await PDFDocument.create();
+      for (let i = 0; i < imageFiles.length; i++) {
+        const f = imageFiles[i];
+        const bytes = await f.arrayBuffer();
+        const isPng = f.type === 'image/png';
+        const embedded = isPng ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
+        const page = pdfDoc.addPage([embedded.width, embedded.height]);
+        page.drawImage(embedded, { x: 0, y: 0, width: embedded.width, height: embedded.height });
+      }
+      const out = await pdfDoc.save({ useObjectStreams: true });
+      setPdfBlob(new Blob([out as any], { type: 'application/pdf' }));
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold">Convert</h3>
+      <div className="space-y-2">
+        <label className="font-medium">Images to PDF</label>
+        <input type="file" accept="image/png,image/jpeg" multiple onChange={(e) => setImageFiles(e.target.files)} />
+        <button className="px-4 py-2 bg-indigo-600 text-white rounded" disabled={processing || !imageFiles} onClick={imagesToPdf}>
+          {processing ? 'Converting...' : 'Create PDF'}
+        </button>
+      </div>
+      {pdfBlob && (
+        <a className="underline text-indigo-600" href={URL.createObjectURL(pdfBlob)} download="images-to-pdf.pdf">
+          Download PDF
         </a>
-      ))}
+      )}
     </div>
-    
-    <div className="mt-6 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-      <h4 className="font-bold text-slate-800 dark:text-white mb-2">🛠️ Desktop Power Tools (Advanced Batch Processing)</h4>
-      <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-        <li>• <strong>PDFtk</strong> - Command-line tool for scripting/automation</li>
-        <li>• <strong>QPDF</strong> - CLI for repair, encryption, transformation</li>
-        <li>• <strong>PDFsam</strong> - Open-source split & merge with GUI</li>
-        <li>• <strong>Adobe Acrobat Pro</strong> - Industry standard for professional editing</li>
-      </ul>
+  );
+};
+
+const QuickEditTool: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [output, setOutput] = useState<Blob | null>(null);
+  const [textToAdd, setTextToAdd] = useState<string>('');
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+
+  async function applyEdit() {
+    if (!file) return;
+    setProcessing(true);
+    try {
+      const bytes = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(bytes);
+      const pages = pdfDoc.getPages();
+      const idx = Math.min(Math.max(0, pageIndex), pages.length - 1);
+      const page = pages[idx];
+      page.drawText(textToAdd, { x: position.x, y: position.y, size: 12, color: rgb(0, 0, 0) });
+      const out = await pdfDoc.save({ useObjectStreams: true });
+      setOutput(new Blob([out as any], { type: 'application/pdf' }));
+    } finally {
+      setProcessing(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold">Quick Edit</h3>
+      <div className="space-y-2">
+        <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <div className="grid grid-cols-2 gap-2">
+          <label className="text-sm">Text</label>
+          <input className="border rounded px-2 py-1" value={textToAdd} onChange={(e) => setTextToAdd(e.target.value)} />
+          <label className="text-sm">Page Index (0-based)</label>
+          <input type="number" className="border rounded px-2 py-1" value={pageIndex} onChange={(e) => setPageIndex(parseInt(e.target.value || '0'))} />
+          <label className="text-sm">X</label>
+          <input type="number" className="border rounded px-2 py-1" value={position.x} onChange={(e) => setPosition({ ...position, x: parseFloat(e.target.value || '0') })} />
+          <label className="text-sm">Y</label>
+          <input type="number" className="border rounded px-2 py-1" value={position.y} onChange={(e) => setPosition({ ...position, y: parseFloat(e.target.value || '0') })} />
+        </div>
+        <button className="px-4 py-2 bg-indigo-600 text-white rounded" disabled={processing || !file || !textToAdd} onClick={applyEdit}>
+          {processing ? 'Applying...' : 'Apply Text'}
+        </button>
+      </div>
+      {output && (
+        <a className="underline text-indigo-600" href={URL.createObjectURL(output)} download="quick-edit.pdf">
+          Download Edited PDF
+        </a>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default PdfTools;
