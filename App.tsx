@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Settings, Moon, Sun, Globe, Search, 
-  LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard
+  LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard,
+  Code, Type, Palette, Hash, Link as LinkIcon, Clock
 } from 'lucide-react';
 import { ToolCategory, ToolItem } from './types';
 import Hero from './components/Hero';
@@ -10,27 +11,51 @@ import SmartTextTools from './components/Tools/SmartTextTools';
 import ImageTools from './components/Tools/ImageTools';
 import PdfTools from './components/Tools/PdfTools';
 import UtilityTools from './components/Tools/UtilityTools';
+import DeveloperTools from './components/Tools/DeveloperTools';
+import ContentTools from './components/Tools/ContentTools';
 
 // --- Tool Data Definition ---
 const TOOLS: ToolItem[] = [
+  // Finance Tools
   { id: 't1', name: 'Income Tax Calculator', description: 'Calculate your annual tax liabilities.', category: 'Finance', icon: DollarSign },
   { id: 't2', name: 'Loan EMI Calculator', description: 'Plan your loans with smart EMI breakdowns.', category: 'Finance', icon: CreditCard, popular: true },
+  { id: 't9', name: 'SIP Calculator', description: 'Estimate returns on your monthly investments.', category: 'Finance', icon: DollarSign },
+  
+  // AI Text Tools
   { id: 't3', name: 'Grammar Checker', description: 'AI-powered grammar & spell fix.', category: 'Text', icon: FileText, isNew: true },
-  { id: 't4', name: 'Word Counter', description: 'Count words, chars & sentences instantly.', category: 'Text', icon: LayoutGrid },
   { id: 't5', name: 'Rephraser', description: 'Rewrite text professionally with AI.', category: 'Text', icon: FileText, popular: true },
+  { id: 't4', name: 'Word Counter', description: 'Count words, chars & sentences instantly.', category: 'Text', icon: LayoutGrid },
+  
+  // Developer Tools
+  { id: 't11', name: 'JSON Formatter', description: 'Format & minify JSON beautifully.', category: 'Developer', icon: Code, popular: true },
+  { id: 't12', name: 'Base64 Encoder', description: 'Encode/decode Base64 strings.', category: 'Developer', icon: Code },
+  { id: 't13', name: 'Hash Generator', description: 'Generate SHA-1, SHA-256 hashes.', category: 'Developer', icon: Hash },
+  { id: 't14', name: 'URL Encoder', description: 'Encode/decode URL components.', category: 'Developer', icon: LinkIcon },
+  { id: 't15', name: 'Timestamp Converter', description: 'Convert timestamps to dates & vice versa.', category: 'Developer', icon: Clock },
+  
+  // Content Tools
+  { id: 't16', name: 'Case Converter', description: 'Convert text case (upper, lower, camel, etc).', category: 'Content', icon: Type },
+  { id: 't17', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text instantly.', category: 'Content', icon: FileText },
+  { id: 't18', name: 'Color Picker', description: 'Pick colors & get HEX, RGB, HSL codes.', category: 'Content', icon: Palette },
+  { id: 't19', name: 'Regex Tester', description: 'Test & debug regular expressions.', category: 'Content', icon: Type },
+  
+  // Image & PDF Tools
   { id: 't6', name: 'Image Resizer', description: 'Resize images without losing quality.', category: 'Image', icon: ImageIcon },
   { id: 't7', name: 'PDF Merger', description: 'Combine multiple PDFs into one.', category: 'PDF', icon: File },
+  
+  // Utility Tools
   { id: 't8', name: 'QR Generator', description: 'Create custom QR codes instantly.', category: 'Utility', icon: LayoutGrid },
-  { id: 't9', name: 'SIP Calculator', description: 'Estimate returns on your monthly investments.', category: 'Finance', icon: DollarSign },
-  { id: 't10', name: 'Base64 Encoder', description: 'Convert text/files to Base64 strings.', category: 'Utility', icon: Wrench },
+  { id: 't10', name: 'Unit Converter', description: 'Convert units (length, weight, temp).', category: 'Utility', icon: Wrench },
 ];
 
 const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
     { id: 'All', label: 'All Tools', icon: LayoutGrid },
     { id: 'Finance', label: 'Finance', icon: DollarSign },
-    { id: 'Text', label: 'Text Tools', icon: FileText },
-    { id: 'PDF', label: 'PDF Tools', icon: File },
+    { id: 'Text', label: 'AI Text', icon: FileText },
+    { id: 'Developer', label: 'Developer', icon: Code },
+    { id: 'Content', label: 'Content', icon: Type },
     { id: 'Image', label: 'Image', icon: ImageIcon },
+    { id: 'PDF', label: 'PDF', icon: File },
     { id: 'Utility', label: 'Utility', icon: Wrench },
 ];
 
@@ -80,7 +105,7 @@ const App: React.FC = () => {
         case 't3': // Grammar
         case 't4': // Word Counter
         case 't5': // Rephraser
-            return <SmartTextTools />; // Tabs handles internally
+            return <SmartTextTools />;
         
         case 't6': // Image Resizer
             return <ImageTools />;
@@ -89,9 +114,21 @@ const App: React.FC = () => {
             return <PdfTools />;
         
         case 't8': // QR Generator
+        case 't10': // Unit Converter
             return <UtilityTools initialTool="QR" />;
-        case 't10': // Base64
-            return <UtilityTools initialTool="BASE64" />;
+        
+        case 't11': // JSON Formatter
+        case 't12': // Base64
+        case 't13': // Hash
+        case 't14': // URL Encoder
+        case 't15': // Timestamp
+            return <DeveloperTools />;
+        
+        case 't16': // Case Converter
+        case 't17': // Lorem Ipsum
+        case 't18': // Color Picker
+        case 't19': // Regex Tester
+            return <ContentTools />;
             
         default:
             return (
@@ -121,11 +158,11 @@ const App: React.FC = () => {
           </button>
           
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveToolId(null)}>
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30">
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <Settings className="text-white animate-[spin_8s_linear_infinite]" size={20} />
             </div>
-            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
-              PM TOOLS
+            <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+              ToolSphere
             </span>
           </div>
         </div>

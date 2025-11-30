@@ -91,33 +91,33 @@ const Hero: React.FC<HeroProps> = ({ onExplore }) => {
   }, []);
 
   return (
-    <div className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-slate-900 transition-colors">
-      <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none" />
+    <div className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-slate-900 dark:via-indigo-900 dark:to-purple-900 transition-colors">
+      <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none opacity-30" />
       
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-sm mb-6 animate-bounce-slow">
-            <Sparkles className="text-yellow-500" size={16} />
-            <span className="text-sm font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">New Tools Added</span>
+        <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg mb-6">
+            <Sparkles className="text-yellow-300" size={20} />
+            <span className="text-white font-semibold">Your Ultimate Productivity Hub</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-slate-900 dark:text-white leading-tight">
-          PM TOOLS <br/>
-          <span className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-secondary">
-            Your All-in-One Smart Suite
+        <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white leading-tight">
+          ToolSphere <br/>
+          <span className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300">
+            Complete Toolkit for Everyone
           </span>
         </h1>
         
-        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto">
-          Streamline your workflow with our professional collection of Finance, Text, PDF, and Image utilities. Powered by AI, designed for efficiency.
+        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+          Finance calculators, AI text tools, developer utilities, image editors & more — 30+ professional tools, all free, all in one place.
         </p>
 
         <button 
           onClick={onExplore}
-          className="group relative inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden"
+          className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-indigo-600 rounded-full font-bold text-lg shadow-2xl hover:scale-105 hover:shadow-3xl transition-all duration-300 overflow-hidden"
         >
           <span className="relative z-10">Explore Tools</span>
           <ArrowRight className="group-hover:translate-x-1 transition-transform relative z-10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-pink-300 opacity-0 group-hover:opacity-20 transition-opacity"></div>
         </button>
       </div>
     </div>
