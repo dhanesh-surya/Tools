@@ -146,8 +146,10 @@ const App: React.FC = () => {
             return <PdfTools />;
         
         case 't8': // QR Generator
-        case 't10': // Unit Converter
             return <UtilityTools initialTool="QR" />;
+        
+        case 't10': // Unit Converter
+            return <UtilityTools initialTool="UNIT" />;
         
         case 't11': // JSON Formatter
         case 't12': // Base64
