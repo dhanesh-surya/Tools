@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Settings, Moon, Sun, Globe, Search, 
   LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard,
-  Code, Type, Palette, Hash, Link as LinkIcon, Clock, Percent, Calendar
+  Code, Type, Palette, Hash, Link as LinkIcon, Clock, Percent, Calendar, FileSpreadsheet, Presentation, 
+  FileCode2, Braces, Paintbrush
 } from 'lucide-react';
 import { ToolCategory, ToolItem } from './types';
 import Hero from './components/Hero';
@@ -13,6 +14,8 @@ import PdfTools from './components/Tools/PdfTools';
 import UtilityTools from './components/Tools/UtilityTools';
 import DeveloperTools from './components/Tools/DeveloperTools';
 import ContentTools from './components/Tools/ContentTools';
+import OfficeTools from './components/Tools/OfficeTools';
+import WebDevTools from './components/Tools/WebDevTools';
 
 // --- Tool Data Definition ---
 const TOOLS: ToolItem[] = [
@@ -49,6 +52,20 @@ const TOOLS: ToolItem[] = [
   // Utility Tools
   { id: 't8', name: 'QR Generator', description: 'Create custom QR codes instantly.', category: 'Utility', icon: LayoutGrid },
   { id: 't10', name: 'Unit Converter', description: 'Convert units (length, weight, temp).', category: 'Utility', icon: Wrench },
+  
+  // MS Office Tools
+  { id: 't23', name: 'Word Counter Pro', description: 'Advanced document analysis for DOCX files.', category: 'Office', icon: FileText, isNew: true },
+  { id: 't24', name: 'Excel Formula Helper', description: 'Generate & explain Excel formulas.', category: 'Office', icon: FileSpreadsheet, popular: true },
+  { id: 't25', name: 'PPT Template Generator', description: 'Create PowerPoint slide templates.', category: 'Office', icon: Presentation },
+  { id: 't26', name: 'CSV to JSON Converter', description: 'Convert CSV/Excel to JSON format.', category: 'Office', icon: FileSpreadsheet },
+  { id: 't27', name: 'Table Generator', description: 'Create markdown & HTML tables easily.', category: 'Office', icon: LayoutGrid },
+  
+  // Web Development Tools
+  { id: 't28', name: 'HTML Formatter', description: 'Format & beautify HTML code.', category: 'WebDev', icon: FileCode2, popular: true },
+  { id: 't29', name: 'CSS Minifier', description: 'Compress CSS for faster load times.', category: 'WebDev', icon: Braces },
+  { id: 't30', name: 'CSS Gradient Generator', description: 'Create beautiful CSS gradients visually.', category: 'WebDev', icon: Paintbrush, isNew: true },
+  { id: 't31', name: 'Box Shadow Generator', description: 'Design CSS box shadows with preview.', category: 'WebDev', icon: Palette },
+  { id: 't32', name: 'HTML Entity Encoder', description: 'Encode/decode HTML special characters.', category: 'WebDev', icon: Code },
 ];
 
 const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
@@ -60,6 +77,8 @@ const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
     { id: 'Image', label: 'Image', icon: ImageIcon },
     { id: 'PDF', label: 'PDF', icon: File },
     { id: 'Utility', label: 'Utility', icon: Wrench },
+    { id: 'Office', label: 'MS Office', icon: FileSpreadsheet },
+    { id: 'WebDev', label: 'Web Dev', icon: FileCode2 },
 ];
 
 const App: React.FC = () => {
@@ -163,6 +182,20 @@ const App: React.FC = () => {
         case 't18': // Color Picker
         case 't19': // Regex Tester
             return <ContentTools />;
+        
+        case 't23': // Word Counter Pro
+        case 't24': // Excel Formula Helper
+        case 't25': // PPT Template
+        case 't26': // CSV to JSON
+        case 't27': // Table Generator
+            return <OfficeTools />;
+        
+        case 't28': // HTML Formatter
+        case 't29': // CSS Minifier
+        case 't30': // CSS Gradient
+        case 't31': // Box Shadow
+        case 't32': // HTML Entity
+            return <WebDevTools />;
             
         default:
             return (
