@@ -217,9 +217,9 @@ const App: React.FC = () => {
           {/* Theme Toggle */}
           <button 
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:ring-2 ring-primary transition-all"
+            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-110 hover:rotate-12 transition-all duration-300 shadow-sm hover:shadow-md"
           >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            {darkMode ? <Sun size={20} className="animate-spin-slow" /> : <Moon size={20} />}
           </button>
         </div>
       </header>
@@ -235,22 +235,27 @@ const App: React.FC = () => {
                  <button
                     key={cat.id}
                     onClick={() => { setActiveCategory(cat.id); setActiveToolId(null); setSidebarOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden ${
                       activeCategory === cat.id && !activeToolId
-                      ? 'bg-primary text-white shadow-md'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-lg shadow-primary/30'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1'
                     }`}
                  >
-                   <cat.icon size={18} />
-                   {cat.label}
+                   {activeCategory === cat.id && !activeToolId && (
+                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50"></div>
+                   )}
+                   <cat.icon size={18} className={`transition-transform duration-200 ${
+                     activeCategory === cat.id && !activeToolId ? 'scale-110' : 'group-hover:scale-110'
+                   }`} />
+                   <span className="relative z-10">{cat.label}</span>
                  </button>
                ))}
              </nav>
 
              <div className="mt-8">
-               <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-primary">{toolUsageCount.toLocaleString()}</div>
-                  <div className="text-xs text-slate-500 uppercase">Tools Used</div>
+               <div className="bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800 rounded-xl p-5 text-center border border-primary/20 dark:border-slate-700 shadow-sm">
+                  <div className="text-3xl font-extrabold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">{toolUsageCount.toLocaleString()}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider mt-1 font-semibold">Tools Used Today</div>
                </div>
              </div>
            </div>
@@ -369,30 +374,49 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredTools.map(tool => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+                  {filteredTools.map((tool, index) => (
                     <div 
                       key={tool.id} 
                       onClick={() => handleToolClick(tool.id)}
-                      className="group bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                      className="group bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden animate-fade-in"
                     >
                         {/* Hover Gradient Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                         
-                        <div className="flex justify-between items-start mb-4">
-                            <div className={`p-3 rounded-lg ${tool.category === 'Finance' ? 'bg-green-100 text-green-600' : tool.category === 'Text' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} dark:bg-slate-800`}>
-                                <tool.icon size={24} />
+                        {/* Shine Effect */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"></div>
+                        </div>
+                        
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div className={`p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-sm group-hover:shadow-md ${
+                              tool.category === 'Finance' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 
+                              tool.category === 'Text' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 
+                              tool.category === 'Developer' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' : 
+                              tool.category === 'Content' ? 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' : 
+                              tool.category === 'Image' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400' : 
+                              tool.category === 'PDF' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 
+                              'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
+                            }`}>
+                                <tool.icon size={24} className="transition-transform duration-300 group-hover:scale-110" />
                             </div>
                             {tool.popular && (
-                                <span className="px-2 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold uppercase rounded-full tracking-wide">Hot</span>
+                                <span className="px-2.5 py-1 bg-gradient-to-r from-orange-400 to-red-500 text-white text-[10px] font-bold uppercase rounded-full tracking-wide shadow-md animate-pulse">Hot</span>
                             )}
                             {tool.isNew && (
-                                <span className="px-2 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold uppercase rounded-full tracking-wide">New</span>
+                                <span className="px-2.5 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-[10px] font-bold uppercase rounded-full tracking-wide shadow-md">New</span>
                             )}
                         </div>
                         
-                        <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-1 relative z-10">{tool.name}</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 relative z-10">{tool.description}</p>
+                        <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-2 relative z-10 group-hover:text-primary transition-colors duration-300">{tool.name}</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 relative z-10 leading-relaxed">{tool.description}</p>
+                        
+                        {/* Arrow indicator on hover */}
+                        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                          <ChevronRight size={18} className="text-primary" />
+                        </div>
                     </div>
                   ))}
                 </div>
