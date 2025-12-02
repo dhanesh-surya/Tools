@@ -1,6 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 
-export type ToolCategory = 'All' | 'Finance' | 'Text' | 'Developer' | 'Content' | 'PDF' | 'Image' | 'Utility' | 'Office' | 'WebDev';
+export type ToolCategory = 'All' | 'Finance' | 'Text' | 'Developer' | 'Content' | 'PDF' | 'Image' | 'Utility' | 'Office' | 'WebDev' | 'SEO' | 'Analytics' | 'Crypto' | 'Email' | 'DataScience' | 'Security';
 
 export interface ToolItem {
   id: string;

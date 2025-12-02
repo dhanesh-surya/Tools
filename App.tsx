@@ -3,7 +3,7 @@ import {
   Menu, X, Settings, Moon, Sun, Globe, Search, 
   LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard,
   Code, Type, Palette, Hash, Link as LinkIcon, Clock, Percent, Calendar, FileSpreadsheet, Presentation, 
-  FileCode2, Braces, Paintbrush
+  FileCode2, Braces, Paintbrush, TrendingUp, BarChart3, Bitcoin, Mail, Database, Shield, HelpCircle, Star, History
 } from 'lucide-react';
 import { ToolCategory, ToolItem } from './types';
 import Hero from './components/Hero';
@@ -16,6 +16,11 @@ import DeveloperTools from './components/Tools/DeveloperTools';
 import ContentTools from './components/Tools/ContentTools';
 import OfficeTools from './components/Tools/OfficeTools';
 import WebDevTools from './components/Tools/WebDevTools';
+import SEOTools from './components/Tools/SEOTools';
+import AnalyticsTools from './components/Tools/AnalyticsTools';
+import CryptoTools from './components/Tools/CryptoTools';
+import SecurityTools from './components/Tools/SecurityTools';
+import UsageGuide from './components/UsageGuide';
 
 // --- Tool Data Definition ---
 const TOOLS: ToolItem[] = [
@@ -66,6 +71,42 @@ const TOOLS: ToolItem[] = [
   { id: 't30', name: 'CSS Gradient Generator', description: 'Create beautiful CSS gradients visually.', category: 'WebDev', icon: Paintbrush, isNew: true },
   { id: 't31', name: 'Box Shadow Generator', description: 'Design CSS box shadows with preview.', category: 'WebDev', icon: Palette },
   { id: 't32', name: 'HTML Entity Encoder', description: 'Encode/decode HTML special characters.', category: 'WebDev', icon: Code },
+  
+  // SEO Tools
+  { id: 't33', name: 'Meta Tag Generator', description: 'Create SEO-optimized meta tags for websites.', category: 'SEO', icon: TrendingUp, popular: true },
+  { id: 't34', name: 'Keyword Density Checker', description: 'Analyze keyword usage in your content.', category: 'SEO', icon: Search },
+  { id: 't35', name: 'Backlink Analyzer', description: 'Check and analyze backlink quality.', category: 'SEO', icon: LinkIcon },
+  { id: 't36', name: 'Schema Markup Generator', description: 'Generate JSON-LD structured data.', category: 'SEO', icon: Code, isNew: true },
+  
+  // Analytics Tools
+  { id: 't37', name: 'UTM Builder', description: 'Create trackable campaign URLs.', category: 'Analytics', icon: BarChart3 },
+  { id: 't38', name: 'ROI Calculator', description: 'Calculate marketing return on investment.', category: 'Analytics', icon: DollarSign, popular: true },
+  { id: 't39', name: 'A/B Test Calculator', description: 'Statistical significance for A/B tests.', category: 'Analytics', icon: BarChart3 },
+  { id: 't40', name: 'Conversion Rate Calculator', description: 'Track and optimize conversion rates.', category: 'Analytics', icon: TrendingUp },
+  
+  // Crypto Tools
+  { id: 't41', name: 'Crypto Profit Calculator', description: 'Calculate cryptocurrency profits & losses.', category: 'Crypto', icon: Bitcoin, popular: true },
+  { id: 't42', name: 'Mining Calculator', description: 'Estimate mining profitability.', category: 'Crypto', icon: Bitcoin },
+  { id: 't43', name: 'DCA Calculator', description: 'Dollar-cost averaging investment calculator.', category: 'Crypto', icon: TrendingUp, isNew: true },
+  { id: 't44', name: 'Gas Fee Estimator', description: 'Ethereum gas fee calculator.', category: 'Crypto', icon: Bitcoin },
+  
+  // Email Marketing Tools
+  { id: 't45', name: 'Email Template Builder', description: 'Create responsive email templates.', category: 'Email', icon: Mail, popular: true },
+  { id: 't46', name: 'Subject Line Tester', description: 'Test and optimize email subject lines.', category: 'Email', icon: Mail },
+  { id: 't47', name: 'Email Validator', description: 'Validate email addresses in bulk.', category: 'Email', icon: Mail },
+  { id: 't48', name: 'Spam Score Checker', description: 'Check if your email will hit spam.', category: 'Email', icon: Shield },
+  
+  // Data Science Tools
+  { id: 't49', name: 'Statistical Calculator', description: 'Mean, median, mode, std deviation.', category: 'DataScience', icon: Database },
+  { id: 't50', name: 'Correlation Calculator', description: 'Calculate Pearson correlation coefficient.', category: 'DataScience', icon: BarChart3, isNew: true },
+  { id: 't51', name: 'Data Visualizer', description: 'Create charts from your data.', category: 'DataScience', icon: BarChart3, popular: true },
+  { id: 't52', name: 'Sample Size Calculator', description: 'Determine required sample size.', category: 'DataScience', icon: Database },
+  
+  // Security Tools
+  { id: 't53', name: 'Password Generator', description: 'Generate ultra-secure passwords.', category: 'Security', icon: Shield, popular: true },
+  { id: 't54', name: 'Password Strength Checker', description: 'Test password security level.', category: 'Security', icon: Shield },
+  { id: 't55', name: 'Encryption Tool', description: 'AES encryption/decryption.', category: 'Security', icon: Shield },
+  { id: 't56', name: 'SSL Certificate Checker', description: 'Verify SSL certificate validity.', category: 'Security', icon: Shield, isNew: true },
 ];
 
 const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
@@ -79,6 +120,12 @@ const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
     { id: 'Utility', label: 'Utility', icon: Wrench },
     { id: 'Office', label: 'MS Office', icon: FileSpreadsheet },
     { id: 'WebDev', label: 'Web Dev', icon: FileCode2 },
+    { id: 'SEO', label: 'SEO', icon: TrendingUp },
+    { id: 'Analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'Crypto', label: 'Crypto', icon: Bitcoin },
+    { id: 'Email', label: 'Email Marketing', icon: Mail },
+    { id: 'DataScience', label: 'Data Science', icon: Database },
+    { id: 'Security', label: 'Security', icon: Shield },
 ];
 
 const App: React.FC = () => {
@@ -196,6 +243,30 @@ const App: React.FC = () => {
         case 't31': // Box Shadow
         case 't32': // HTML Entity
             return <WebDevTools />;
+        
+        case 't33': // Meta Tag Generator
+        case 't34': // Keyword Density
+        case 't35': // Backlink Analyzer
+        case 't36': // Schema Markup
+            return <SEOTools />;
+        
+        case 't37': // UTM Builder
+        case 't38': // ROI Calculator
+        case 't39': // A/B Test Calculator
+        case 't40': // Conversion Rate
+            return <AnalyticsTools />;
+        
+        case 't41': // Crypto Profit
+        case 't42': // Mining Calculator
+        case 't43': // DCA Calculator
+        case 't44': // Gas Fee
+            return <CryptoTools />;
+        
+        case 't53': // Password Generator
+        case 't54': // Password Strength
+        case 't55': // Encryption
+        case 't56': // SSL Checker
+            return <SecurityTools />;
             
         default:
             return (
@@ -498,6 +569,9 @@ const App: React.FC = () => {
 
         </main>
       </div>
+
+      {/* Usage Guide Component */}
+      <UsageGuide toolId={activeToolId || undefined} />
     </div>
   );
 };
