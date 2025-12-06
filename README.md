@@ -1,12 +1,12 @@
 <div align="center">
 <img width="1200" height="475" alt="All Tools Banner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 
-# 🚀 All Tools - Premium Tools Portal
+# 🚀 ToolSphere - Comprehensive Tools Portal
 ### World's Most Comprehensive Free Online Tools Platform
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-success?style=for-the-badge)](https://alltools-dcmk.onrender.com/)
-[![Tools](https://img.shields.io/badge/Tools-56+-blue?style=for-the-badge)](https://alltools-dcmk.onrender.com/)
-[![Categories](https://img.shields.io/badge/Categories-16-orange?style=for-the-badge)](https://alltools-dcmk.onrender.com/)
+[![Tools](https://img.shields.io/badge/Tools-101+-blue?style=for-the-badge)](https://alltools-dcmk.onrender.com/)
+[![Categories](https://img.shields.io/badge/Categories-20-orange?style=for-the-badge)](https://alltools-dcmk.onrender.com/)
 
 **Your one-stop destination for professional-grade tools** - From finance calculators to crypto analytics, SEO optimization to security tools. Everything you need, completely free!
 
@@ -61,11 +61,12 @@ Every tool comes with:
 - URL Encoder/Decoder
 - Unix Timestamp Converter
 
-### 📝 **Content Tools** (4 tools)
+### 📝 **Content Tools** (5 tools)
 - Case Converter (6 formats)
 - Lorem Ipsum Generator
 - Color Picker (HEX, RGB, HSL)
 - Regex Tester (Pattern matching)
+- Unicode Converter (KrutiDev, Preeti, Mangal)
 
 ### 🖼️ **Image Tools** (3 tools)
 - Image Resizer

@@ -57,6 +57,15 @@ app.post('/api/gemini', async (req, res) => {
         if (income == null || obligations == null || amount == null) throw new Error('Missing financial parameters');
         prompt = `I have a monthly income of ${income}, monthly obligations of ${obligations}, and I want to borrow ${amount}. Act as a strict financial advisor. Analyze my eligibility in 3 sentences. 1. Determine if I am eligible (high/medium/low chance). 2. Explain why based on Debt-to-Income ratio. 3. Give one tip.`;
         break;
+      case 'translateText':
+        const { text: translateText, fromLang, toLang } = req.body;
+        if (!translateText || !fromLang || !toLang) throw new Error('Missing translation parameters');
+        prompt = `Translate the following text from ${fromLang} to ${toLang}. Return ONLY the translated text without any introductory phrases, explanations, or additional formatting. If the source and target languages are the same, return the original text unchanged.
+
+Text to translate: "${translateText}"
+
+Translation:`;
+        break;
       default:
         throw new Error('Unknown action');
     }
@@ -66,6 +75,21 @@ app.post('/api/gemini', async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message || 'Internal error' });
   }
+});
+
+// Authentication endpoints (for future server-side features)
+app.post('/api/auth/verify', (req, res) => {
+  // This could be used for server-side session verification
+  // For now, just return success since Firebase handles auth
+  res.json({ success: true, message: 'Authentication verified' });
+});
+
+// User preferences endpoint
+app.post('/api/user/preferences', (req, res) => {
+  // This could store user preferences server-side
+  const { userId, preferences } = req.body;
+  // For now, just acknowledge
+  res.json({ success: true, message: 'Preferences saved' });
 });
 
 // Serve static files from dist

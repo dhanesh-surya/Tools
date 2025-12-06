@@ -34,3 +34,12 @@ export const analyzeLoanEligibility = async (income: number, obligations: number
   if (income == null || obligations == null || amount == null) return 'Missing parameters.';
   return callFunction({ action: 'analyzeLoanEligibility', income, obligations, amount });
 };
+
+export const recommendMovies = async (genre?: string, mood?: string, year?: string): Promise<string> => {
+  return callFunction({ action: 'recommendMovies', genre, mood, year });
+};
+
+export const translateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
+  if (!text || !fromLang || !toLang) return 'Missing translation parameters.';
+  return callFunction({ action: 'translateText', text, fromLang, toLang });
+};

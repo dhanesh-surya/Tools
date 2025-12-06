@@ -140,7 +140,7 @@ const ImageTools: React.FC = () => {
     // Batch processing
     const handleBatchFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
-        const files = Array.from(e.target.files).filter((f) => f.type.startsWith('image/'));
+        const files = Array.from(e.target.files).filter((f: File) => f.type.startsWith('image/'));
         setBatchFiles(files);
     };
 
@@ -525,7 +525,7 @@ const BatchTool: React.FC<any> = ({ batchFiles, batchWidth, setBatchWidth, batch
             <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Selected files:</p>
                 <div className="max-h-32 overflow-y-auto space-y-1">
-                    {Array.from(batchFiles).map((file, i) => (
+                    {Array.from(batchFiles).map((file: File, i) => (
                         <div key={i} className="text-xs text-slate-500 dark:text-slate-500 flex items-center gap-2">
                             <FileImage size={14} />
                             <span>{file.name}</span>
