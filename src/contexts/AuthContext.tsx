@@ -11,9 +11,22 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+// Check if Firebase config is available
+const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
+
+let app: any = null;
+let auth: any = null;
+let googleProvider: GoogleAuthProvider | null = null;
+
+if (isFirebaseConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+  } catch (error) {
+    console.warn('Firebase initialization failed:', error);
+  }
+}
 
 interface AuthContextType {
   user: User | null;
@@ -39,6 +52,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -48,6 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!auth || !googleProvider) {
+      console.warn('Firebase not configured');
+      return;
+    }
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
@@ -57,6 +79,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithEmail = async (email: string, password: string) => {
+    if (!auth) {
+      console.warn('Firebase not configured');
+      return;
+    }
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -66,6 +92,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
+    if (!auth) {
+      console.warn('Firebase not configured');
+      return;
+    }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -75,6 +105,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
+    if (!auth) {
+      console.warn('Firebase not configured');
+      return;
+    }
     try {
       await signOut(auth);
     } catch (error) {
