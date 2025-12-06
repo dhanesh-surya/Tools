@@ -264,7 +264,11 @@ const CATEGORIES: { id: ToolCategory; label: string; icon: any }[] = [
 
 const AppContent: React.FC = () => {
   const { user, logout } = useAuth();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Load dark mode preference from localStorage on initialization
+    const stored = localStorage.getItem('darkMode');
+    return stored ? JSON.parse(stored) : false;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<ToolCategory>('All');
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
@@ -296,8 +300,9 @@ const AppContent: React.FC = () => {
     }
   }, []);
 
-  // Theme Toggle Effect
+  // Theme Toggle Effect - persist to localStorage
   useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -318,17 +323,36 @@ const AppContent: React.FC = () => {
   const filteredTools = TOOLS.filter(tool => {
     const matchesCategory = activeCategory === 'All' || 
                            (activeCategory === 'Favorites' ? favorites.has(tool.id) : tool.category === activeCategory);
-    const matchesSearch = debouncedSearchQuery === '' || 
-                          tool.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
-                          tool.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-                          tool.category.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+    
+    // Enhanced search logic - check multiple fields
+    const searchLower = debouncedSearchQuery.toLowerCase().trim();
+    const matchesSearch = searchLower === '' || 
+                          tool.name.toLowerCase().includes(searchLower) || 
+                          tool.description.toLowerCase().includes(searchLower) ||
+                          tool.category.toLowerCase().includes(searchLower);
+    
     return matchesCategory && matchesSearch;
   }).sort((a, b) => {
-    // Sort favorites first
+    // If there's a search query, prioritize exact name matches
+    const searchLower = debouncedSearchQuery.toLowerCase().trim();
+    if (searchLower) {
+      const aNameMatch = a.name.toLowerCase().startsWith(searchLower) ? 0 : 1;
+      const bNameMatch = b.name.toLowerCase().startsWith(searchLower) ? 0 : 1;
+      if (aNameMatch !== bNameMatch) return aNameMatch - bNameMatch;
+    }
+    
+    // Then sort by favorites
     const aIsFavorite = favorites.has(a.id);
     const bIsFavorite = favorites.has(b.id);
     if (aIsFavorite && !bIsFavorite) return -1;
     if (!aIsFavorite && bIsFavorite) return 1;
+    
+    // Then by popular/new status
+    if (a.popular && !b.popular) return -1;
+    if (!a.popular && b.popular) return 1;
+    if (a.isNew && !b.isNew) return -1;
+    if (!a.isNew && b.isNew) return 1;
+    
     return 0;
   });
 
@@ -1046,7 +1070,30 @@ const AppContent: React.FC = () => {
                         
                         {/* Search Suggestions for main search */}
                         {showSearchSuggestions && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto">
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto">
+                            {/* Matching Tools */}
+                            {filteredTools.slice(0, 5).length > 0 && (
+                              <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+                                <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Matching Tools</div>
+                                {filteredTools.slice(0, 5).map((tool) => (
+                                  <button
+                                    key={tool.id}
+                                    onClick={() => {
+                                      handleToolClick(tool.id);
+                                      setShowSearchSuggestions(false);
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <tool.icon size={14} className="text-slate-400" />
+                                      <span>{tool.name}</span>
+                                    </div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 ml-6">{tool.description}</div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            
                             {/* Recent Searches */}
                             {recentSearches.length > 0 && (
                               <div className="p-3 border-b border-slate-200 dark:border-slate-700">
