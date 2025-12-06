@@ -634,17 +634,17 @@ const AppContent: React.FC = () => {
             <Menu size={24} />
           </button>
           
-          <div className="flex items-center gap-3 cursor-pointer hover:scale-105 transition-transform duration-200" onClick={() => navigateToPage('home')}>
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30 animate-pulse">
+          <button className="flex items-center gap-3 cursor-pointer hover:scale-105 hover:drop-shadow-lg transition-all duration-200 group" onClick={() => navigateToPage('home')} title="Go to Homepage">
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30 animate-pulse group-hover:shadow-2xl">
               <Settings className="text-white animate-[spin_8s_linear_infinite]" size={20} />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:from-indigo-700 group-hover:to-purple-700 transition-all">
                 ToolSphere
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">100+ Professional Tools</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">100+ Professional Tools</p>
             </div>
-          </div>
+          </button>
         </div>
 
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
@@ -1178,15 +1178,15 @@ const AppContent: React.FC = () => {
              <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                  <div className="md:col-span-2">
-                   <div className="flex items-center gap-3 mb-4">
-                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                   <button onClick={() => navigateToPage('home')} className="flex items-center gap-3 mb-4 cursor-pointer hover:scale-105 hover:drop-shadow-lg transition-all duration-200 group" title="Go to Homepage">
+                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:shadow-2xl">
                        <Settings className="text-white" size={24} />
                      </div>
                      <div>
-                       <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ToolSphere</h3>
-                       <p className="text-sm text-slate-500 dark:text-slate-400">Complete Toolkit for Everyone</p>
+                       <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:from-indigo-700 group-hover:to-purple-700 transition-all">ToolSphere</h3>
+                       <p className="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">Complete Toolkit for Everyone</p>
                      </div>
-                   </div>
+                   </button>
                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                      Your comprehensive toolkit featuring 72+ professional tools across 20 categories. 
                      All tools are free, privacy-focused, and work entirely in your browser.
@@ -1207,21 +1207,21 @@ const AppContent: React.FC = () => {
                  <div>
                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Categories</h4>
                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                     <li><a href="#" className="hover:text-primary transition-colors">Finance Tools</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">AI Text Tools</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Developer Tools</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Design Tools</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Productivity</a></li>
+                     <li><button onClick={() => { setActiveCategory('Finance'); setActivePage('home'); }} className="hover:text-primary transition-colors">Finance Tools</button></li>
+                     <li><button onClick={() => { setActiveCategory('Text'); setActivePage('home'); }} className="hover:text-primary transition-colors">AI Text Tools</button></li>
+                     <li><button onClick={() => { setActiveCategory('Developer'); setActivePage('home'); }} className="hover:text-primary transition-colors">Developer Tools</button></li>
+                     <li><button onClick={() => { setActiveCategory('Design'); setActivePage('home'); }} className="hover:text-primary transition-colors">Design Tools</button></li>
+                     <li><button onClick={() => { setActiveCategory('Productivity'); setActivePage('home'); }} className="hover:text-primary transition-colors">Productivity</button></li>
                    </ul>
                  </div>
                  
                  <div>
                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Support</h4>
                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                     <li><a href="#" className="hover:text-primary transition-colors">How to Use</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-                     <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
+                     <li><button onClick={() => navigateToPage('how-to-use')} className="hover:text-primary transition-colors">How to Use</button></li>
+                     <li><button onClick={() => navigateToPage('privacy')} className="hover:text-primary transition-colors">Privacy Policy</button></li>
+                     <li><button onClick={() => navigateToPage('terms')} className="hover:text-primary transition-colors">Terms of Service</button></li>
+                     <li><button onClick={() => navigateToPage('contact')} className="hover:text-primary transition-colors">Contact Us</button></li>
                    </ul>
                  </div>
                </div>
