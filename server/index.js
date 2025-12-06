@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 import fetch from 'node-fetch';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -92,16 +93,54 @@ app.post('/api/user/preferences', (req, res) => {
   res.json({ success: true, message: 'Preferences saved' });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Serve static files from dist
 const distPath = path.join(__dirname, '..', 'dist');
-app.use(express.static(distPath));
+console.log(`Serving static files from: ${distPath}`);
+
+// Check if dist exists
+if (!existsSync(distPath)) {
+  console.error(`ERROR: dist directory not found at ${distPath}`);
+  console.error('Please run "npm run build" first');
+  process.exit(1);
+}
+
+app.use(express.static(distPath, {
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
+}));
 
 // Fallback to index.html for SPA routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  if (!existsSync(indexPath)) {
+    console.error(`ERROR: index.html not found at ${indexPath}`);
+    return res.status(500).send('Application not built. Please run npm run build.');
+  }
+  res.sendFile(indexPath);
 });
 
 const port = process.env.PORT || 10000;
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+const server = app.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on http://0.0.0.0:${port}`);
+  console.log(`Dist path: ${distPath}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, closing server...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
