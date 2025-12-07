@@ -308,10 +308,20 @@ const AppContent: React.FC = () => {
       // ignore storage errors (e.g., private mode)
     }
 
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    try {
+      if (darkMode) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+        document.documentElement.removeAttribute('data-theme');
+        document.body.removeAttribute('data-theme');
+      }
+    } catch (err) {
+      // ignore DOM exceptions in non-browser contexts
     }
   }, [darkMode]);
 
