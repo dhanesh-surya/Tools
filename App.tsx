@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { 
   Menu, X, Settings, Sun, Globe, Search, 
   LayoutGrid, FileText, Image as ImageIcon, File, DollarSign, Wrench, ChevronRight, Home, CreditCard,
@@ -300,9 +300,14 @@ const AppContent: React.FC = () => {
     }
   }, []);
 
-  // Theme Toggle Effect - persist to localStorage
-  useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  // Theme Toggle Effect - persist to localStorage and apply before paint
+  useLayoutEffect(() => {
+    try {
+      localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    } catch (e) {
+      // ignore storage errors (e.g., private mode)
+    }
+
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
