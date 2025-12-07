@@ -442,7 +442,7 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                         </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}/>
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--tooltip-bg)', color: 'var(--tooltip-text)', border: `1px solid var(--tooltip-border)`, borderRadius: '8px' }}/>
                         <Legend verticalAlign="bottom" height={36}/>
                     </PieChart>
                     </ResponsiveContainer>
@@ -482,7 +482,7 @@ const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({ initialTab = 'EMI
                             <Cell fill="#4f46e5" />
                             <Cell fill="#10b981" />
                         </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}/>
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--tooltip-bg)', color: 'var(--tooltip-text)', border: `1px solid var(--tooltip-border)`, borderRadius: '8px' }}/>
                         <Legend verticalAlign="bottom" height={36}/>
                     </PieChart>
                     </ResponsiveContainer>
