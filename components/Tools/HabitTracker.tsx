@@ -29,6 +29,18 @@ const HabitTracker: React.FC = () => {
     { id: 'other' as Category, name: 'Other', color: '#6b7280', icon: '✨' },
   ];
 
+  const getColorClasses = (hex: string) => {
+    const colorMap: { [key: string]: { bg: string; text: string; bgLight: string; textDark: string } } = {
+      '#10b981': { bg: 'bg-green-500', text: 'text-green-500', bgLight: 'bg-green-100 dark:bg-green-900/20', textDark: 'text-green-600 dark:text-green-400' },
+      '#3b82f6': { bg: 'bg-blue-500', text: 'text-blue-500', bgLight: 'bg-blue-100 dark:bg-blue-900/20', textDark: 'text-blue-600 dark:text-blue-400' },
+      '#8b5cf6': { bg: 'bg-purple-500', text: 'text-purple-500', bgLight: 'bg-purple-100 dark:bg-purple-900/20', textDark: 'text-purple-600 dark:text-purple-400' },
+      '#ef4444': { bg: 'bg-red-500', text: 'text-red-500', bgLight: 'bg-red-100 dark:bg-red-900/20', textDark: 'text-red-600 dark:text-red-400' },
+      '#f59e0b': { bg: 'bg-yellow-500', text: 'text-yellow-500', bgLight: 'bg-yellow-100 dark:bg-yellow-900/20', textDark: 'text-yellow-600 dark:text-yellow-400' },
+      '#6b7280': { bg: 'bg-gray-500', text: 'text-gray-500', bgLight: 'bg-gray-100 dark:bg-gray-900/20', textDark: 'text-gray-600 dark:text-gray-400' },
+    };
+    return colorMap[hex] || { bg: 'bg-gray-500', text: 'text-gray-500', bgLight: 'bg-gray-100 dark:bg-gray-900/20', textDark: 'text-gray-600 dark:text-gray-400' };
+  };
+
   const addHabit = () => {
     if (!newHabit.name.trim()) return;
 
@@ -234,7 +246,7 @@ const HabitTracker: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="text-lg font-bold text-slate-900 dark:text-white">{habit.name}</h4>
-                          <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: `${habit.color}20`, color: habit.color }}>
+                          <span className={`text-xs px-2 py-1 rounded-full ${getColorClasses(habit.color).bgLight} ${getColorClasses(habit.color).textDark}`}>
                             {categories.find(c => c.id === habit.category)?.name}
                           </span>
                         </div>
@@ -264,10 +276,9 @@ const HabitTracker: React.FC = () => {
                       </div>
                       <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all"
+                          className={`h-full rounded-full transition-all ${getColorClasses(habit.color).bg}`}
                           style={{
-                            width: `${Math.min(getWeeklyProgress(habit), 100)}%`,
-                            backgroundColor: habit.color
+                            width: `${Math.min(getWeeklyProgress(habit), 100)}%`
                           }}
                         />
                       </div>
@@ -378,11 +389,11 @@ const HabitTracker: React.FC = () => {
                 const count = habits.filter(h => h.category === cat.id).length;
                 if (count === 0) return null;
                 return (
-                  <div key={cat.id} className="flex items-center justify-between p-2 rounded-lg" style={{ backgroundColor: `${cat.color}10` }}>
-                    <span className="text-sm font-medium" style={{ color: cat.color }}>
+                  <div key={cat.id} className={`flex items-center justify-between p-2 rounded-lg ${getColorClasses(cat.color).bgLight}`}>
+                    <span className={`text-sm font-medium ${getColorClasses(cat.color).textDark}`}>
                       {cat.icon} {cat.name}
                     </span>
-                    <span className="font-bold" style={{ color: cat.color }}>{count}</span>
+                    <span className={`font-bold ${getColorClasses(cat.color).textDark}`}>{count}</span>
                   </div>
                 );
               })}

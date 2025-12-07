@@ -303,7 +303,7 @@ const SecurityTools: React.FC = () => {
                 {testPassword && (
                   <>
                     <div className={`p-8 rounded-lg bg-${strength.color}-50 dark:bg-${strength.color}-900/20 border-2 border-${strength.color}-200 dark:border-${strength.color}-700 text-center`}>
-                      <div className="text-5xl font-bold mb-2" style={{color: strength.color === 'green' ? '#10b981' : strength.color === 'blue' ? '#3b82f6' : strength.color === 'yellow' ? '#f59e0b' : '#ef4444'}}>
+                      <div className={`text-5xl font-bold mb-2 text-${strength.color}-500`}>
                         {strength.level}
                       </div>
                       <div className="text-lg text-slate-600 dark:text-slate-400">Password Strength</div>
@@ -312,7 +312,7 @@ const SecurityTools: React.FC = () => {
                     <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4">
                       <div 
                         className={`h-4 rounded-full bg-${strength.color}-500 transition-all`}
-                        style={{width: `${(strength.score / 7) * 100}%`, backgroundColor: strength.color === 'green' ? '#10b981' : strength.color === 'blue' ? '#3b82f6' : strength.color === 'yellow' ? '#f59e0b' : '#ef4444'}}
+                        style={{width: `${(strength.score / 7) * 100}%`}}
                       />
                     </div>
 
