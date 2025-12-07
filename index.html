@@ -1,170 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <title>ToolSphere - Complete Toolkit for Everyone</title>
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://alltools-dcmk.onrender.com/" />
-    <meta property="og:title" content="ToolSphere - Complete Toolkit for Everyone" />
-    <meta property="og:description" content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
-    <meta property="og:image" content="https://alltools-dcmk.onrender.com/og-image.png" />
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://alltools-dcmk.onrender.com/" />
-    <meta property="twitter:title" content="ToolSphere - Complete Toolkit for Everyone" />
-    <meta property="twitter:description" content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
-    <meta property="twitter:image" content="https://alltools-dcmk.onrender.com/og-image.png" />
-    
-    <!-- Additional Meta Tags -->
-    <meta name="description" content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
-    <meta name="keywords" content="tools, online tools, productivity, AI tools, finance calculator, text tools, image tools, PDF tools, development tools" />
-    <meta name="author" content="ToolSphere" />
-    
-    <style>
-      :root {
-        --tooltip-bg: #ffffff;
-        --tooltip-text: #0f172a;
-        --tooltip-border: #e2e8f0;
-      }
-      .dark {
-        --tooltip-bg: #0b1220;
-        --tooltip-text: #e2e8f0;
-        --tooltip-border: #1e293b;
-      }
 
-      /* Smooth Scrolling */
-      * {
-        scroll-behavior: smooth;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>ToolSphere - Complete Toolkit for Everyone</title>
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #cbd5e1, #94a3b8);
-        border-radius: 10px;
-        border: 2px solid #f1f5f9;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #94a3b8, #64748b);
-      }
-      .dark ::-webkit-scrollbar-track {
-        background: #1e293b;
-      }
-      .dark ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #475569, #334155);
-        border-color: #1e293b;
-      }
-      .dark ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #64748b, #475569);
-      }
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://alltools-dcmk.onrender.com/" />
+  <meta property="og:title" content="ToolSphere - Complete Toolkit for Everyone" />
+  <meta property="og:description"
+    content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
+  <meta property="og:image" content="https://alltools-dcmk.onrender.com/og-image.png" />
 
-      /* Glass Panel Effect */
-      .glass-panel {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-      }
-      .dark .glass-panel {
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid rgba(148, 163, 184, 0.1);
-      }
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://alltools-dcmk.onrender.com/" />
+  <meta property="twitter:title" content="ToolSphere - Complete Toolkit for Everyone" />
+  <meta property="twitter:description"
+    content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
+  <meta property="twitter:image" content="https://alltools-dcmk.onrender.com/og-image.png" />
 
-      /* Gradient Text */
-      .gradient-text {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
+  <!-- Additional Meta Tags -->
+  <meta name="description"
+    content="Access 100+ free online tools across 20 categories including AI, productivity, finance, design, and development tools. No signup required!" />
+  <meta name="keywords"
+    content="tools, online tools, productivity, AI tools, finance calculator, text tools, image tools, PDF tools, development tools" />
+  <meta name="author" content="ToolSphere" />
+  <meta name="theme-color" content="#6366f1" />
 
-      /* Card Hover Effect */
-      .card-hover {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .card-hover:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      }
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-      /* Button Ripple Effect */
-      .btn-ripple {
-        position: relative;
-        overflow: hidden;
-      }
-      .btn-ripple::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-      }
-      .btn-ripple:active::after {
-        width: 300px;
-        height: 300px;
-      }
+  <!-- Modern Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
 
-      /* Skeleton Loader */
-      .skeleton {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-      }
-      .dark .skeleton {
-        background: linear-gradient(90deg, #1e293b 25%, #0f172a 50%, #1e293b 75%);
-        background-size: 200% 100%;
-      }
-      @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
+  <style>
+    /* Critical CSS - Prevent FOUC */
+    html {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
 
-      /* Focus Ring */
-      *:focus-visible {
-        outline: 2px solid #4f46e5;
-        outline-offset: 2px;
-        border-radius: 4px;
-      }
+    /* Initial loading state */
+    body {
+      opacity: 0;
+      animation: fadeInBody 0.3s ease-out 0.1s forwards;
+    }
 
-      /* Selection */
-      ::selection {
-        background-color: #4f46e5;
-        color: white;
+    @keyframes fadeInBody {
+      to {
+        opacity: 1;
       }
+    }
 
-      /* Smooth Transitions */
-      .smooth-transition {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
+    /* Prevent layout shift during theme switch */
+    html.transitioning,
+    html.transitioning * {
+      transition: none !important;
+    }
+  </style>
+</head>
 
-      /* Shadow Variants */
-      .shadow-glow {
-        box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
-      }
-      .shadow-glow-hover:hover {
-        box-shadow: 0 0 30px rgba(79, 70, 229, 0.5);
-      }
-    </style>
-  </head>
-  <body class="bg-light text-slate-800 dark:bg-dark dark:text-slate-100 transition-colors duration-300">
-    <div id="root"></div>
+<body class="bg-white text-slate-900 antialiased">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
