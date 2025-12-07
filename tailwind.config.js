@@ -6,7 +6,10 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
+  // Explicit class-based dark mode selector so Tailwind emits
+  // class-controlled dark variants (not media queries).
+  // Tailwind v4 accepts an array form to set the strategy and selector.
+  darkMode: ['class', '.dark'],
   theme: {
     extend: {
       colors: {
